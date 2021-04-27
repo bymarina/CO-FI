@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div id="app" class="row justify-content-center">
+    <div class="card">
+        <div class="card-body">
+            {% if orders|length == 0 %}
+            <div class="card-text">No coffee orders history found.</div>
+            {% else %}
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col" class="text-center">User</th>
+                        <th scope="col" class="text-center">Recipe Name</th>
+                        <th scope="col" class="text-center">Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in orders %}
+                    <tr>
+                        <th scope="row" class="text-center">{{ item.user.user.username }}</th>
+                        <th scope="row" class="text-center">{{ item.recipe.name }}</th>
+                        <td class="text-center">{{ item.time |date:"DATETIME_FORMAT" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

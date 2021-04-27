@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div id="app" class="row justify-content-center">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Coffee Machine Status</h5>
+            {% if status == 0 %}
+            <div class="alert alert-success" role="alert">
+                <i class="fas fa-check"></i> Machine Operating without any issues!
+            </div>
+            {% else %}
+            <div class="alert alert-success" role="alert">
+                <i class="fas fa-exclamation"></i> Machine Operating without any issues!
+            </div>
+            {% endif %}
+            <h5 class="card-title">Ingredients Quantities</h5>
+            <div class="card-text">Coffee:{{ coffee }}</div>
+            <div class="card-text">Milk Powder:{{ milk }}</div>
+            <div class="card-text">Chocolate:{{ chocolate }}</div>
+            <div class="card-text">Water:{{ water }}</div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

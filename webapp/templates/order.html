@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div id="app" class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="alert" role="alert" v-if="activate" v-bind:class="alertClass">
+                {% templatetag openvariable %} message {% templatetag closevariable %}
+                <button type="button" class="close" v-on:click="dismiss">
+                    <span aria-hidden="true">&times;</span>
+                </button>  <!-- {% templatetag openvariable %} {% templatetag closevariable %} -->
+            </div>
+            <div class="card-body">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+                    {% for item in coffee %}
+                        <div class="col-lg-4 d-flex align-items-stretch">
+                            <div class="card" style="width: 18rem;">
+                                <img src="{{ item.image.url }}" class="card-img-top" alt="...">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{item.name}}</h5>
+                                    <p class="card-text">Coffee:{{ item.coffee}}</p>
+                                    <p class="card-text">Milk Powder:{{ item.milk}}</p>
+                                    <p class="card-text">Chocolate:{{ item.chocolate}}</p>
+                                    <p class="card-text">Cost:{{ item.cost}}</p>
+                                    <!-- <a href="#" class="btn btn-primary">Order</a> -->
+                                    <button v-on:click="order({{ item.pk }})" class="btn btn-primary">Order</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    let app = new Vue({    
+        el: "#app",
+        data: {
+            csrfToken: '{{ csrf_token }}',
+            activate:false,
+            message:"Hello World",
+            alertClass: "alert-success"
+        }, methods : {
+            order : function(pk) {
+                // evita o evento submit padrão
+                console.log(pk);
+                console.log(document.getElementById("credits").innerHTML);
+                const urlTemplate = '{% url "orderDrink" %}'
+                axios.post(urlTemplate, {'pk':pk}, {headers:{'stuff':'abc', 'X-CSRFToken':this.csrfToken}})
+                .then(response => {
+                    if(response.data.success){
+                        this.message = "Successfully ordered your coffee!";
+                        this.alertClass = "alert-success";
+                        document.getElementById("credits").innerHTML = document.getElementById("credits").innerHTML - response.data.credits;
+                    }
+                    else{
+                        this.message = "Failed to order your coffee!";
+                        this.alertClass = "alert-danger";
+                    }
+                    this.activate = true;
+                }, error => {
+                    this.message = "Coffee Machine server error!";
+                    this.alertClass = "alert-danger";
+                    this.activate = true;
+                });
+            },
+            dismiss: function(){
+                this.activate = false;
+            }
+        }
+    });
+</script>
+
+{% endblock %}
